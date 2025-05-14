@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="title">Dodaj zdjęcie</h1>
+<form method="POST" enctype="multipart/form-data">
+  <div class="field">
+    <label class="label">Wybierz plik</label>
+    <div class="control">
+      <input class="input" type="file" name="photo" required>
+    </div>
+  </div>
+  <button class="button is-link">Wyślij</button>
+</form>
+{% endblock %}

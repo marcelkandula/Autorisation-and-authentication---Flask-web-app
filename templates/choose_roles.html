@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="title">Wybierz role</h1>
+<form method="POST">
+  {% for r in roles %}
+    <label class="checkbox">
+      <input type="checkbox" name="roles" value="{{ r }}"> {{ r }}
+    </label><br>
+  {% endfor %}
+  <button class="button is-link mt-4">Zatwierdź</button>
+</form>
+{% endblock %}

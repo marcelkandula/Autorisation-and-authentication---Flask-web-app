@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>MyGallery</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+<section class="section">
+  <div class="container">
+    <nav class="level">
+      <div class="level-left">
+        <div class="level-item"><strong><a href="{{ url_for('index') }}">Home</a></strong></div>
+        <div class="level-item"><strong><a href="{{ url_for('gallery') }}">Gallery</a></strong></div>
+
+      </div>
+      <div class="level-right">
+        {% if current_user.is_authenticated %}
+          <span class="level-item">Cześć {{ current_user.username }}!</span>
+          <a class="button is-small level-item" href="{{ url_for('logout') }}">Wyloguj</a>
+        {% else %}
+          <a class="button is-small level-item" href="{{ url_for('register') }}">Rejestracja</a>
+          <a class="button is-small level-item" href="{{ url_for('login') }}">Logowanie</a>
+          <a class="button is-small level-item" href="{{ url_for('google.login') }}">Google</a>
+        {% endif %}
+      </div>
+    </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat,msg in messages %}
+        <div class="notification is-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</section>
+</body>
+</html>

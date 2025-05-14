@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="title">Galeria</h1>
+{% if 'Writer' in current_user.roles %}
+  <a class="button is-link mb-4" href="{{ url_for('upload') }}">Dodaj zdjęcie</a>
+{% endif %}
+{% for img in images %}
+  <figure class="image is-3by2">
+    <img src="{{ url_for('static', filename=img) }}" alt="{{ img }}">
+  </figure>
+  <br>
+{% else %}
+  <p>Brak zdjęć.</p>
+{% endfor %}
+{% endblock %}

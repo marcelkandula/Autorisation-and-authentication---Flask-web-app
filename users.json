@@ -1,0 +1,21 @@
+{
+  "marcel": {
+    "password": "scrypt:32768:8:1$ej8a0ZWStW08KLHC$1f69b0fc3762d6227a94f564ff577d894ec40c565e4f5769a04d0d21ba28e595e83e41aee7ee2942dd4ddec00905b8d28958e7f713b69681fdb0b413e1b4722a",
+    "roles": [
+      "Reader",
+      "Writer"
+    ]
+  },
+  "marcelread": {
+    "password": "scrypt:32768:8:1$tYAthqpASErLZVN6$99d0924ac03be7aa318104599f169377e02b178f3501004918da1b5c5e9d891fe6f683ece496880c091ab604b52a0feedb91689c4542ecc01aba041a9e8f9793",
+    "roles": [
+      "Reader"
+    ]
+  },
+  "marcelwrite": {
+    "password": "scrypt:32768:8:1$P34CIsUIGTViXVAw$a7b6c7cbe9868905b28164f0449b06678055beb4c910b6f864791c85a343fec930b6a4116734f0bf544e8b8db450d28c309fa6af6233f97c4a3f77bcb73181f6",
+    "roles": [
+      "Writer"
+    ]
+  }
+}

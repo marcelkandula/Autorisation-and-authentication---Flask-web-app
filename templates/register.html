@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="title">Rejestracja</h1>
+<form method="POST">
+  <div class="field">
+    <label class="label">Username</label>
+    <div class="control"><input class="input" name="username" required></div>
+  </div>
+  <div class="field">
+    <label class="label">Hasło</label>
+    <div class="control"><input class="input" type="password" name="password" required></div>
+  </div>
+  <div class="field">
+    <label class="label">Role</label>
+    <div class="control">
+      <div class="select is-multiple">
+        <select name="roles" multiple required size="{{ roles|length }}">
+          {% for r in roles %}
+            <option value="{{ r }}">{{ r }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <p class="help">Ctrl+klik, aby zaznaczyć wiele</p>
+    </div>
+  </div>
+  <button class="button is-link">Zarejestruj</button>
+</form>
+{% endblock %}
