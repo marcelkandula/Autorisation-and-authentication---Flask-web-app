@@ -17,5 +17,11 @@
     "roles": [
       "Writer"
     ]
+  },
+  "marcelkandula8@gmail.com": {
+    "password": null,
+    "roles": [
+      "Reader", "Writer"
+    ]
   }
 }

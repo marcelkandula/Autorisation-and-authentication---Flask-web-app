@@ -11,17 +11,16 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
-# ---- Konfiguracja ----
+# Konfiguracja
 DATA_FILE = 'users.json'
 AVAILABLE_ROLES = ['Reader', 'Writer']
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'replace-with-secure-random')
 
-# ---- Flask-Login ----
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# ---- Model użytkownika (w pamięci) ----
+# Model użytkownika 
 class User(UserMixin):
     def __init__(self, id_, username, email, roles):
         self.id = id_
@@ -33,7 +32,6 @@ USERS = {}   # username -> User
 CREDS = {}   # username -> password_hash
 ROLES = {}   # username -> [role1, role2]
 
-# ---- Ładowanie i zapisywanie JSON ----
 def load_users():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r') as f:
@@ -41,7 +39,6 @@ def load_users():
         for u, entry in data.items():
             CREDS[u] = entry['password']
             ROLES[u] = entry.get('roles', [])
-
 
 def save_users():
     data = {
@@ -54,8 +51,7 @@ def save_users():
 load_users()
 
 @login_manager.user_loader
-def load_user(user_id):
-    # w locie odbuduj User z CREDS/ROLES
+def load_single_user(user_id):
     if user_id in CREDS:
         roles = ROLES.get(user_id, [])
         user = User(user_id, user_id, None, roles)
@@ -63,7 +59,7 @@ def load_user(user_id):
         return user
     return None
 
-# ---- Google OAuth2 ----
+# Google OAuth2
 
 app.config['GOOGLE_OAUTH_CLIENT_ID']     = '478792325715-3e1cvgf7po7km0q1drf3bdshhb5nebbl.apps.googleusercontent.com'
 app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = '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'
@@ -84,30 +80,28 @@ app.register_blueprint(google_bp, url_prefix='/login')
 def google_auth():
     resp = google.get('/oauth2/v2/userinfo')
     email = resp.json()['email']
-    # tymczasowo zaloguj
     user = User(email, email, email, [])
     USERS[email] = user
+    CREDS[email] = None
     login_user(user)
 
-    # jeśli to nowy użytkownik lub nie ma roli, idź na wybór
     if not ROLES.get(email):
         return redirect(url_for('choose_roles'))
     return redirect(url_for('index'))
 
-# ---- RBAC ----
+# RBAC
 def role_required(*needed_roles):
     def decorator(f):
         @wraps(f)
         @login_required
         def decorated(*args, **kwargs):
-            # superuser: brak w tym demo
             if not set(current_user.roles) & set(needed_roles):
                 return abort(403)
             return f(*args, **kwargs)
         return decorated
     return decorator
 
-# ---- Rejestracja ----
+# rejestracja
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -132,7 +126,7 @@ def register():
             return redirect(url_for('index'))
     return render_template('register.html', roles=AVAILABLE_ROLES)
 
-# ---- Logowanie ----
+# login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -148,14 +142,13 @@ def login():
         flash('Błędne dane', 'danger')
     return render_template('login.html')
 
-# ---- Wylogowanie ----
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-# ---- Widoki ----
+# Views
 @app.route('/')
 def index():
     return render_template('index.html')
