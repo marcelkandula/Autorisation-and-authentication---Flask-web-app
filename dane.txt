@@ -1,2 +1,0 @@
-clientid: 478792325715-3e1cvgf7po7km0q1drf3bdshhb5nebbl.apps.googleusercontent.com
-secret clientkey: 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
