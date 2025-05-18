@@ -1,5 +1,4 @@
 # MyGallery Flask Demo
-# MyGallery Flask Demo
 
 ## About
 
