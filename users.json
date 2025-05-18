@@ -18,10 +18,23 @@
       "Writer"
     ]
   },
+  "marcel1": {
+    "password": "scrypt:32768:8:1$m6oySUVppV1uN2CP$69db7af92f38391b683945bd3ee890b3423504ec965c6c77e4239eeb477ffdf0272f2c713a266aa046e3386e706d27cc7ce60ffc1463a1bf0a3e4e2e6ccfa8f3",
+    "roles": [
+      "Reader"
+    ]
+  },
+  "kochamjulianke": {
+    "password": "scrypt:32768:8:1$amPSkFNBAd6tJAkB$e385aaee0f931e414b0255fbf4a4e3f6ac02a073b9af058ecec32954ed3fc57c18eec4c128bea057bfb46f060e1f0acb655b38192dba436f9e48a1dd4da0c8c6",
+    "roles": [
+      "Reader"
+    ]
+  },
   "marcelkandula8@gmail.com": {
     "password": null,
     "roles": [
-      "Reader", "Writer"
+      "Reader",
+      "Writer"
     ]
   }
 }

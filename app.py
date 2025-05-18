@@ -10,6 +10,8 @@ from flask_login import (
 from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from dotenv import load_dotenv
+load_dotenv()
 
 # Konfiguracja
 DATA_FILE = 'users.json'
@@ -36,14 +38,14 @@ def load_users():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r') as f:
             data = json.load(f)
-        for u, entry in data.items():
-            CREDS[u] = entry['password']
-            ROLES[u] = entry.get('roles', [])
+        for username, entry in data.items():
+            CREDS[username] = entry['password']
+            ROLES[username] = entry.get('roles', [])
 
 def save_users():
     data = {
-        u: {'password': CREDS[u], 'roles': ROLES[u]}
-        for u in CREDS
+        username: {'password': CREDS[username], 'roles': ROLES[username]}
+        for username in CREDS
     }
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=2)
@@ -61,8 +63,8 @@ def load_single_user(user_id):
 
 # Google OAuth2
 
-app.config['GOOGLE_OAUTH_CLIENT_ID']     = '478792325715-3e1cvgf7po7km0q1drf3bdshhb5nebbl.apps.googleusercontent.com'
-app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = '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'
+app.config['GOOGLE_OAUTH_CLIENT_ID']     = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
+app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
 
 
 google_bp = make_google_blueprint(
@@ -78,8 +80,8 @@ app.register_blueprint(google_bp, url_prefix='/login')
 
 @app.route('/google/authorized')
 def google_auth():
-    resp = google.get('/oauth2/v2/userinfo')
-    email = resp.json()['email']
+    response = google.get('/oauth2/v2/userinfo')
+    email = response.json()['email']
     user = User(email, email, email, [])
     USERS[email] = user
     CREDS[email] = None
@@ -105,22 +107,22 @@ def role_required(*needed_roles):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        u = request.form['username'].strip()
-        pw = request.form['password']
+        username = request.form['username'].strip()
+        password = request.form['password']
         roles = request.form.getlist('roles')
-        if not u or not pw:
+        if not username or not password:
             flash('Username i hasło są wymagane', 'danger')
-        elif u in CREDS:
+        elif username in CREDS:
             flash('Użytkownik już istnieje', 'danger')
         elif not set(roles) <= set(AVAILABLE_ROLES):
             flash('Nieprawidłowe role', 'danger')
         else:
-            hash_pw = generate_password_hash(pw)
-            CREDS[u] = hash_pw
-            ROLES[u] = roles
+            hash_password = generate_password_hash(password)
+            CREDS[username] = hash_password
+            ROLES[username] = roles
             save_users()
-            user = User(u, u, None, roles)
-            USERS[u] = user
+            user = User(username, username, None, roles)
+            USERS[username] = user
             login_user(user)
             flash('Zarejestrowano i zalogowano', 'success')
             return redirect(url_for('index'))
@@ -130,12 +132,12 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        u = request.form['username'].strip()
-        pw = request.form['password']
-        h = CREDS.get(u)
-        if h and check_password_hash(h, pw):
-            user = User(u, u, None, ROLES.get(u, []))
-            USERS[u] = user
+        username = request.form['username'].strip()
+        password = request.form['password']
+        hashed_password = CREDS.get(username)
+        if hashed_password and check_password_hash(hashed_password, password):
+            user = User(username, username, None, ROLES.get(username, []))
+            USERS[username] = user
             login_user(user)
             flash('Zalogowano', 'success')
             return redirect(url_for('index'))
